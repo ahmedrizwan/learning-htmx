@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <Layout>
       <div class="w-full p-4">
-        <h1 class="text-2xl font-semibold mb-4">Hello HTMX!</h1>
+        <h1 class="text-2xl font-semibold mb-4">Images Grid with Search</h1>
 
         <div class="flex flex-row items-center w-full gap-4 mb-6">
           <Search />
