@@ -4,7 +4,7 @@ const imageItem = (url: string) => {
       src={url}
       width="400"
       height="300"
-      class="object-cover w-full h-60 rounded-md"
+      class="object-cover w-full h-60 rounded-md bg-gray-200"
       style="aspect-ratio: 400 / 300; object-fit: cover"
     />
   );

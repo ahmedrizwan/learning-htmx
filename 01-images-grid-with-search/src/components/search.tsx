@@ -22,7 +22,7 @@ export function Search() {
           aria-label="Search"
           class="pl-10 pr-4 py-2 w-full bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           type="text"
-          hx-get="/images?page=1"
+          hx-get="/search"
           hx-target="#results-grid"
           hx-swap="innerHTML"
           hx-trigger="change, keyup delay:500ms"

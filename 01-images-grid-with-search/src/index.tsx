@@ -6,13 +6,13 @@ import { GridItem } from "./components/grid-item";
 import { Toast } from "./components/toast";
 import { InfiniteLoader } from "./components/infinite-loader";
 
-const images = Array(30)
-  .fill(0)
-  .map((_, i) => ({
-    id: i,
-    url: "https://placehold.co/400",
-    favorited: false,
-  }));
+type Image = {
+  id: number;
+  favorited: boolean;
+  url: string;
+};
+
+let images: Image[] = [];
 
 const app = new Hono();
 
@@ -22,14 +22,47 @@ app.get("/", async (c) => {
   return c.html(<Home />);
 });
 
-app.get("/images", async (c) => {
-  const { page } = c.req.query();
+app.get("/search", async (c) => {
+  // just return a random number of image,
+  // in a random order based on the search query
 
-  await new Promise((r) => setTimeout(r, 1000));
+  const numberOfImages = Math.floor(Math.random() * images.length - 1);
+  const slicedImages = images.slice(0, numberOfImages);
+
+  let shuffled = slicedImages
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+
+  await new Promise((r) => setTimeout(r, 500));
 
   return c.html(
     <>
-      {images.map((image) => (
+      {shuffled.map((image) => (
+        <GridItem {...image} />
+      ))}
+    </>
+  );
+});
+
+app.get("/images", async (c) => {
+  const { page } = c.req.query();
+
+  const start = (parseInt(page) - 1) * 30;
+
+  const _images = Array.from({ length: 30 }, (_, i) => i + start).map((id) => ({
+    id,
+    favorited: false,
+    url: `https://picsum.photos/200?${id}`,
+  }));
+
+  await new Promise((r) => setTimeout(r, 500));
+
+  images.push(..._images);
+
+  return c.html(
+    <>
+      {_images.map((image) => (
         <GridItem {...image} />
       ))}
 
@@ -45,12 +78,12 @@ app.put("/favorite", async (c) => {
 
   await new Promise((r) => setTimeout(r, 500));
 
-  // if (index !== -1) {
-  //   const image = images[index];
-  //   image.favorited = !image.favorited;
+  if (index !== -1) {
+    const image = images[index];
+    image.favorited = !image.favorited;
 
-  //   return c.html(<GridItem {...image} />);
-  // }
+    return c.html(<GridItem {...image} />);
+  }
 
   return c.html(<Toast text={`Action failed, please try again!`} />);
 });
