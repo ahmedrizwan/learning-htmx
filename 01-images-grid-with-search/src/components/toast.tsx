@@ -1,5 +1,3 @@
-import styles from "./toast.module.css";
-
 export async function Toast(props: { text: string }) {
   return (
     <div

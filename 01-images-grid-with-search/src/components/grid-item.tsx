@@ -10,37 +10,15 @@ const imageItem = (url: string) => {
   );
 };
 
-const heartItem = (favorited: boolean) => {
+const heartItem = (id: number, favorited: boolean) => {
   return (
     <div class="absolute right-0 bottom-0 mb-3 mr-3 h-8 w-8 rounded-sm flex items-center justify-center">
       <svg
+        id={`heart-${id}`}
         xmlns="http://www.w3.org/2000/svg"
         width="16"
         height="16"
         fill={favorited ? "red" : "white"}
-        class="bi bi-heart-fill"
-        viewBox="0 0 16 16"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"
-        />
-      </svg>
-    </div>
-  );
-};
-
-const optimisticHeartItem = (id: number, favorited: boolean) => {
-  return (
-    <div
-      id={`optimistic-favorite-${id}`}
-      class="my-indicator absolute right-0 bottom-0 mb-3 mr-3 h-8 w-8 rounded-sm flex items-center justify-center"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="16"
-        height="16"
-        fill={!favorited ? "red" : "white"}
         class="bi bi-heart-fill"
         viewBox="0 0 16 16"
       >
@@ -60,18 +38,25 @@ export function GridItem(props: {
 }) {
   const { id, url, favorited } = props;
 
+  function setFavorite() {
+    const heartSVG = window.document.getElementById(`heart-${id}`);
+    if (!heartSVG) return;
+
+    const currentColor = heartSVG?.getAttribute("fill");
+    heartSVG.style.fill = currentColor === "red" ? "white" : "red";
+  }
+
   return (
     <div
       class="relative group overflow-hidden hover:opacity-80 hover:cursor-pointer"
       hx-put={`/favorite?id=${id}`}
       hx-trigger="click"
-      hx-swap="outerHTML"
-      hx-indicator={`#optimistic-favorite-${id}`}
+      hx-swap="none"
+      onclick={"(" + setFavorite + ")()"}
       id={id.toString()}
     >
       {imageItem(url)}
-      {heartItem(favorited)}
-      {optimisticHeartItem(id, favorited)}
+      {heartItem(id, favorited)}
     </div>
   );
 }
